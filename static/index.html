@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 Voice Assistant</h1>
+            <p>Click the microphone to record your voice (powered by OpenAI Whisper & TTS)</p>
+        </header>
+
+        <main>
+            <div class="voice-controls">
+                <button id="micButton" class="mic-button" title="Start/Stop Audio Recording">
+                    <span class="mic-icon">🎤</span>
+                </button>
+                <div class="status" id="status">Ready to record</div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message assistant">
+                        <div class="message-content">
+                            <strong>Assistant:</strong> Hello! I'm your voice assistant powered by OpenAI Whisper and TTS. Click the microphone to record your voice and I'll respond with speech.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="clearChat" class="clear-button">Clear Chat</button>
+                <div class="connection-status">
+                    <span id="connectionStatus" class="status-indicator disconnected">Disconnected</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
