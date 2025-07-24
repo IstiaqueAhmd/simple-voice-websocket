@@ -5,39 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Assistant</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎤 Voice Assistant</h1>
-            <p>Click the microphone to record your voice (powered by OpenAI Whisper & TTS)</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1L21 5v14l-9 4-9-4V5l9-4z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    <h1>Voice Assistant</h1>
+                </div>
+                <div class="connection-badge">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="connectionStatus" class="connection-text">Connecting...</span>
+                </div>
+            </div>
         </header>
 
-        <main>
-            <div class="voice-controls">
-                <button id="micButton" class="mic-button" title="Start/Stop Audio Recording">
-                    <span class="mic-icon">🎤</span>
-                </button>
-                <div class="status" id="status">Ready to record</div>
-            </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Voice Controls Section -->
+            <section class="voice-section">
+                <div class="voice-controls">
+                    <button id="micButton" class="mic-button" title="Click to start recording">
+                        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/>
+                            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                        <span class="pulse-ring"></span>
+                    </button>
+                    <p class="voice-hint" id="status">Ready to listen</p>
+                </div>
+            </section>
 
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message assistant">
-                        <div class="message-content">
-                            <strong>Assistant:</strong> Hello! I'm your voice assistant powered by OpenAI Whisper and TTS. Click the microphone to record your voice and I'll respond with speech.
+            <!-- Chat Section -->
+            <section class="chat-section">
+                <div class="chat-header">
+                    <h2>Conversation</h2>
+                    <button id="clearChat" class="clear-button" title="Clear conversation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <div class="message-avatar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6"/>
+                                    <path d="m21 12-6-3-6 3-6-3-6 3"/>
+                                </svg>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI voice assistant powered by OpenAI. Click the microphone to start a conversation - I'll transcribe your speech and respond with both text and voice.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="controls">
-                <button id="clearChat" class="clear-button">Clear Chat</button>
-                <div class="connection-status">
-                    <span id="connectionStatus" class="status-indicator disconnected">Disconnected</span>
-                </div>
-            </div>
+            </section>
         </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Press <kbd>Ctrl</kbd> + <kbd>Space</kbd> to toggle recording</p>
+        </footer>
     </div>
 
     <script src="/static/script.js"></script>

@@ -12,6 +12,7 @@ class VoiceAssistant {
         this.chatMessages = document.getElementById('chatMessages');
         this.clearButton = document.getElementById('clearChat');
         this.connectionStatus = document.getElementById('connectionStatus');
+        this.statusDot = document.getElementById('statusDot');
         
         this.initializeWebSocket();
         this.setupEventListeners();
@@ -28,10 +29,10 @@ class VoiceAssistant {
                     autoGainControl: true
                 } 
             });
-            this.updateStatus('Microphone access granted. Ready to record!');
+            this.updateStatus('Ready to listen');
         } catch (error) {
             console.error('Error accessing microphone:', error);
-            this.updateStatus('Microphone access denied. Please enable microphone access.');
+            this.updateStatus('Microphone access denied');
             this.micButton.disabled = true;
         }
     }
@@ -40,16 +41,14 @@ class VoiceAssistant {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws`;
         
-        this.connectionStatus.textContent = 'Connecting...';
-        this.connectionStatus.className = 'status-indicator connecting';
+        this.updateConnectionStatus('connecting', 'Connecting...');
         
         this.ws = new WebSocket(wsUrl);
         
         this.ws.onopen = () => {
             console.log('WebSocket connected');
-            this.connectionStatus.textContent = 'Connected';
-            this.connectionStatus.className = 'status-indicator connected';
-            this.updateStatus('Connected! Ready to record.');
+            this.updateConnectionStatus('connected', 'Connected');
+            this.updateStatus('Ready to listen');
         };
         
         this.ws.onmessage = (event) => {
@@ -63,9 +62,8 @@ class VoiceAssistant {
         
         this.ws.onclose = () => {
             console.log('WebSocket disconnected');
-            this.connectionStatus.textContent = 'Disconnected';
-            this.connectionStatus.className = 'status-indicator disconnected';
-            this.updateStatus('Disconnected. Attempting to reconnect...');
+            this.updateConnectionStatus('disconnected', 'Disconnected');
+            this.updateStatus('Disconnected - Reconnecting...');
             
             // Attempt to reconnect after 3 seconds
             setTimeout(() => {
@@ -75,8 +73,13 @@ class VoiceAssistant {
         
         this.ws.onerror = (error) => {
             console.error('WebSocket error:', error);
-            this.updateStatus('Connection error occurred.');
+            this.updateStatus('Connection error occurred');
         };
+    }
+    
+    updateConnectionStatus(status, text) {
+        this.statusDot.className = `status-dot ${status}`;
+        this.connectionStatus.textContent = text;
     }
     
     setupEventListeners() {
@@ -127,11 +130,11 @@ class VoiceAssistant {
             this.mediaRecorder.start();
             this.isRecording = true;
             this.micButton.classList.add('listening');
-            this.updateStatus('Recording... Click again to stop.');
+            this.updateStatus('Listening... Click to stop');
             
         } catch (error) {
             console.error('Error starting recording:', error);
-            this.updateStatus('Error starting recording.');
+            this.updateStatus('Error starting recording');
         }
     }
     
@@ -202,7 +205,7 @@ class VoiceAssistant {
                 
                 this.isProcessing = false;
                 this.micButton.classList.remove('processing');
-                this.updateStatus('Ready to record');
+                this.updateStatus('Ready to listen');
                 break;
                 
             case 'error':
@@ -259,12 +262,36 @@ class VoiceAssistant {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
         
+        // Create avatar
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        
+        if (sender === 'user') {
+            avatarDiv.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            `;
+        } else {
+            avatarDiv.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6"/>
+                    <path d="m21 12-6-3-6 3-6-3-6 3"/>
+                </svg>
+            `;
+        }
+        
+        // Create content
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         
-        const senderLabel = sender === 'user' ? 'You' : 'Assistant';
-        contentDiv.innerHTML = `<strong>${senderLabel}:</strong> ${message}`;
+        const messageP = document.createElement('p');
+        messageP.textContent = message;
+        contentDiv.appendChild(messageP);
         
+        messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
         this.chatMessages.appendChild(messageDiv);
         
@@ -279,8 +306,15 @@ class VoiceAssistant {
     clearChat() {
         this.chatMessages.innerHTML = `
             <div class="message assistant">
+                <div class="message-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6"/>
+                        <path d="m21 12-6-3-6 3-6-3-6 3"/>
+                    </svg>
+                </div>
                 <div class="message-content">
-                    <strong>Assistant:</strong> Chat cleared! How can I help you?
+                    <p>Hello! I'm your AI voice assistant powered by OpenAI. Click the microphone to start a conversation - I'll transcribe your speech and respond with both text and voice.</p>
                 </div>
             </div>
         `;
