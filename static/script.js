@@ -6,6 +6,7 @@ class VoiceAssistant {
         this.isRecording = false;
         this.isProcessing = false;
         this.stream = null;
+        this.sessionId = null;
         
         this.micButton = document.getElementById('micButton');
         this.status = document.getElementById('status');
@@ -189,6 +190,13 @@ class VoiceAssistant {
     }
     
     handleWebSocketMessage(data) {
+        // Store session ID if received
+        if (data.session_id && !this.sessionId) {
+            this.sessionId = data.session_id;
+            console.log('Session ID received:', this.sessionId);
+            this.updateSessionDisplay();
+        }
+        
         switch (data.type) {
             case 'ai_response':
                 // Add transcription if available
@@ -303,6 +311,28 @@ class VoiceAssistant {
         this.status.textContent = message;
     }
     
+    updateSessionDisplay() {
+        if (this.sessionId) {
+            const sessionInfo = document.createElement('div');
+            sessionInfo.className = 'session-info';
+            sessionInfo.innerHTML = `
+                <small>Session: ${this.sessionId.substring(0, 8)}...</small>
+            `;
+            
+            // Find existing session info and remove it
+            const existingInfo = document.querySelector('.session-info');
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+            
+            // Add session info to the top of the chat
+            const chatContainer = document.querySelector('.chat-container');
+            if (chatContainer) {
+                chatContainer.insertBefore(sessionInfo, this.chatMessages);
+            }
+        }
+    }
+    
     clearChat() {
         this.chatMessages.innerHTML = `
             <div class="message assistant">
@@ -314,10 +344,17 @@ class VoiceAssistant {
                     </svg>
                 </div>
                 <div class="message-content">
-                    <p>Hello! I'm your AI voice assistant powered by OpenAI. Click the microphone to start a conversation - I'll transcribe your speech and respond with both text and voice.</p>
+                    <p>Hello! I'm your AI voice assistant with conversation memory powered by OpenAI and MongoDB. Click the microphone to start a conversation - I'll remember our chat history!</p>
                 </div>
             </div>
         `;
+        
+        // Clear session ID to start fresh
+        this.sessionId = null;
+        const existingInfo = document.querySelector('.session-info');
+        if (existingInfo) {
+            existingInfo.remove();
+        }
     }
     
     // Send periodic ping to keep connection alive

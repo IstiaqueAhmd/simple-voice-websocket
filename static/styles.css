@@ -302,6 +302,21 @@ body {
     padding: var(--spacing-4);
 }
 
+.session-info {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--gray-100);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-3);
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+}
+
+.session-info small {
+    font-weight: 500;
+}
+
 .chat-messages {
     display: flex;
     flex-direction: column;
